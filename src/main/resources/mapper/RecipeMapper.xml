@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.codecheck.mapper.RecipeMapper">
+	<resultMap type="com.codecheck.bean.Recipe" id="default">
+		<result column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="making_time" property="makingTime" />
+		<result column="serves" property="serves" />
+		<result column="ingredients" property="ingredients" />
+		<result column="cost" property="cost" />
+		<result column="created_at" property="createdAt" />
+		<result column="updated_at" property="updatedAt" />
+	</resultMap>
+
+	<insert id="bulkInsert">
+		insert into recipes (
+			title,
+			making_time,
+			serves,
+			ingredients,
+			cost
+		)
+		values 
+		<foreach collection="list" item="item" separator=","> 
+		(
+			#{item.title}, #{item.makingTime}, #{item.serves}, #{item.ingredients}, #{item.cost}
+		)
+		</foreach>
+	</insert>
+	
+	<select id="findRecipes" parameterType="Integer" resultType="java.util.List">
+		select * from recipes
+		<where>
+			<if test="id != null">
+				id = #{id}
+			</if>
+		</where>
+	</select>
+	<update id="updateRecipe" parameterType="com.codecheck.bean.Recipe">
+		update recipes set (
+			title,
+			making_time,
+			serves,
+			ingredients,
+			cost,
+			updated_at
+		) = (#{bean.title}, #{bean.makingTime}, #{bean.serves}, #{bean.ingredients}, #{bean.cost}, current_timestamp)
+		where id = #{bean.id}
+	</update>
+	<delete id="deleteRecipe" parameterType="Integer">
+		delete from recipes where id = #{id}
+	</delete>
+</mapper>
